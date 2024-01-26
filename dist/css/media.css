@@ -1,0 +1,151 @@
+/* === DESKTOP FIRST === */
+
+/* xl <= Extra extra large (xxl) */
+@media (max-width : 1400px) {
+
+}
+
+/* lg <= Extra large (xl) */
+@media (max-width : 1200px) {
+
+}
+
+/* md <= Large (lg) */
+@media (max-width : 992px) {
+	body {
+		padding-top: calc(var(--logo-height) + 20px + 20px);
+	}
+	h1 {
+		font-size: 1.875rem;
+	}
+
+	.fs-14-mob {
+		font-size: 0.875rem;
+	}
+
+	.fs-16-mob {
+		font-size: 1rem;
+	}
+
+	.section__title--mob {
+		margin-bottom: 30px;
+	}
+
+	.banner__contact-list {
+		font-size: 1.25rem;
+	}
+
+	.header__container {
+		padding: 10px 20px;
+	}
+
+	.logo {
+		position: static;
+		transform: none;
+	}
+
+	.menu {
+		margin-bottom: 40px;
+	} 
+
+	.menu-mobile {
+		opacity: 0;
+		position: fixed;
+		top: calc(var(--logo-height) + 20px);
+		pointer-events: none;
+		width: 100%;
+		left: 0;
+		background: var(--white);
+		transition: all 0.3s ease;
+		box-shadow: 0px 9px 7px rgba(0, 0, 0, .2);
+		padding: 40px 0;
+	}
+
+	.menu-opened .menu-mobile {
+		opacity: 1;
+		pointer-events: all;
+	}
+
+	.lang-switcher {
+		display: none;
+	}
+
+	.lang-switcher-mobile {
+		display: flex;
+		justify-content: center;
+	}
+
+	.menu__list {
+		flex-direction: column;
+	}
+
+	.menu__link {
+		justify-content: center;
+	}
+
+	.card {
+		margin-bottom: 90px;
+	}
+
+	.card--last {
+		margin-bottom: 0;
+	}
+}
+
+/* sm <= Medium (md) */
+@media (max-width : 768px) {
+
+}
+
+/* xs <= Small (sm) */
+@media (max-width : 576px) {
+
+}
+
+
+/* === MOBILE FIRST === */
+
+/* Custom (xs) */
+@media (min-width : 0) {
+
+}
+
+/* Small (sm) */
+@media (min-width : 576px) {
+
+}
+
+/* Medium (md) */
+@media (min-width : 768px) {
+
+}
+
+/* Large (lg) */
+@media (min-width : 992px) {
+	.burger-menu,
+	.lang-switcher-mobile {
+		display: none;
+	}
+
+	.menu__item:first-child .menu__link {
+		padding-left: 0;
+	}
+	
+	.menu__item:last-child .menu__link {
+		padding-right: 0;
+	}
+}
+
+/* Extra large (xl) */
+@media (min-width : 1200px) {
+	.text {
+		font-size: 18px;
+	}
+}
+
+/* Extra extra large (xxl) */
+@media (min-width : 1400px) {
+	.text {
+		font-size: 22px;
+	}
+}
