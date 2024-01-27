@@ -6,41 +6,83 @@ const templatePath = 'index.html';
 const jsonFilesDir = 'translations';
 const outputDir = './dist/';
 
-// Чтение HTML шаблона
+// Read HTML template
 const template = fs.readFileSync(templatePath, 'utf-8');
 
-// Получение списка JSON файлов в директории
+// Get the list of JSON files in directory
 const jsonFiles = fs.readdirSync(jsonFilesDir).filter(file => path.extname(file).toLowerCase() === '.json');
 
-// Обработка каждого JSON файла
+// Processing each JSON files
 jsonFiles.forEach(jsonFile => {
+    const locale = path.basename(jsonFile, path.extname(jsonFile));
     const jsonFilePath = path.join(jsonFilesDir, jsonFile);
     const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'));
+    let outputDirPath;
 
-    // Создание выходной директории
-    const outputDirPath = path.join(outputDir, path.basename(jsonFile, path.extname(jsonFile)));
-    fs.mkdirSync(outputDirPath, { recursive: true });
+    // Do not create new directory for the default root index.html
+    if(locale !== 'default') {
+        // Create output directory
+        outputDirPath = path.join(outputDir, locale);
+        fs.mkdirSync(outputDirPath, { recursive: true });
+    }
 
-    // Создание новой HTML страницы на основе шаблона
+    // Create new HTML page on the template
     const $ = cheerio.load(template, { decodeEntities: false });
 
-    // Замена текста в тегах на основе данных из JSON файла
+    // Change text according to the JSON data
     Object.keys(jsonData).forEach(key => {
         const selector = `[data-${key}]`;
         const element = $(selector);
 
-        if (element.length > 0) {
-            element.text(jsonData[key]);
+        if (jsonData[key]) {
+            if (element.length > 0) {
+                element.text(jsonData[key]);
+            } else {
+                console.warn(`Warning: Element with selector '${selector}' not found.`);
+            }
         } else {
-            console.warn(`Warning: Element with selector '${selector}' not found.`);
+            console.warn(`${locale} locale:`);
+            console.warn(`Warning: Translation '${key}' not found. We just left default one`);
+            console.warn('');
         }
     });
 
-    // Запись новой HTML страницы в выходную директорию
-    const outputFilePath = path.join(outputDirPath, 'index.html');
-    fs.writeFileSync(outputFilePath, $.html(), 'utf-8');
+    // Do not change paths to resources for the default root index.html
+    if(locale !== 'default') {
+        // Change paths to resources 
+        const pathElements = $('[data-path]');
 
-    console.log(`Generated: ${outputFilePath}`);
+        pathElements.each((index, element) => {
+            if($(element).attr('href')) {
+                const hrefValue = $(element).attr('href');
+                $(element).attr('href', `../${hrefValue}`);
+            }
+            if($(element).attr('src')) {
+                const srcValue = $(element).attr('src');
+                $(element).attr('src', `../${srcValue}`);
+            }
+        });
+    }
+
+    // Add class active for current
+    const switcherCurrentElements = $(`[data-switcher=${locale}]`);
+
+    switcherCurrentElements.each((index, element) => {
+        $(element).addClass('active');
+    });
+
+    // Do not write the default root index.html to the separate directory
+    if(locale !== 'default') {
+        // White HTML page to the appropriate directory
+        const outputFilePath = path.join(outputDirPath, 'index.html');
+        fs.writeFileSync(outputFilePath, $.html(), 'utf-8');
+
+        console.log(`Generated: ${outputFilePath}`);
+    } else {
+        const outputFilePath = path.join(outputDir, 'index.html');
+        fs.writeFileSync(outputFilePath, $.html(), 'utf-8');
+        console.log(`Generated: ${outputFilePath}`);
+    }
 });
 
 console.log('Generation complete.');
